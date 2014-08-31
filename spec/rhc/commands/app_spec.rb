@@ -237,6 +237,26 @@ describe RHC::Commands::App do
       end
     end
 
+    context 'when --make-ha option is provide to make an application HA' do
+      before do
+        domain = rest_client.domains.first
+      end
+      context 'when make-ha is not supported by the server' do
+        before { RHC::Rest::Mock::MockRestApplication.any_instance.stub(:supports_make_ha?).and_return(false) }
+        let(:arguments) { ['app', 'create', 'app1', 'mock_standalone_cart-1', '-s', '--make-ha' ] }
+        it("should warn about failure to make the application HA") { run_output.should match("Server does not support HA") }
+      end
+      context 'with -s before --make-ha' do
+        before { RHC::Rest::Mock::MockRestApplication.any_instance.stub(:supports_make_ha?).and_return(true) }
+        let(:arguments) { ['app', 'create', 'app1', 'mock_standalone_cart-1', '-s', '--make-ha' ] }
+        it("should make a scaled app HA") { run_output.should match(/Your application app1 is HA now/m) }
+      end
+      context 'without -s before --make-ha' do
+        let(:arguments) { ['app', 'create', 'app1', 'mock_standalone_cart-1', '--make-ha', '--trace'] }
+        it { expect { run }.to raise_error(RHC::ScalingNotFoundError, "The --make-ha option can be used only with the -s/--scalable option.") }
+      end
+    end
+
   end
 
   describe 'cart matching behavior' do

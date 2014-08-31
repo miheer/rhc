@@ -248,6 +248,22 @@ module RHC
         it_should_behave_like "a control method"
       end
 
+      context "#make_ha" do
+        context "when the server supports MAKE_HA" do
+          let(:supports_make_ha?) { true }
+          let(:control_data) { { :method => :make_ha, :event => 'make-ha', :link => 'make_ha', :payload => false } }
+          it_should_behave_like "a control method"
+        end
+
+        context "when the server doesn't support MAKE_HA" do
+          subject{ RHC::Rest::Application.new }
+          let(:supports_make_ha?) { false }
+          it "raises an exception" do
+            expect { subject.make_ha }.to raise_error(RHC::MakeHaNotSupportedException)
+          end
+        end
+      end
+
       context "#scale_down" do
         let(:control_data) { { :method => :scale_down, :event => 'scale-down', :link => 'scale_down', :payload => false } }
         it_should_behave_like "a control method"
