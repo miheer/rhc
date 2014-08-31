@@ -63,6 +63,7 @@ module RHC::Commands
     option ["--[no-]dns"], "Skip waiting for the application DNS name to resolve. Must be used in combination with --no-git"
     option ['--no-keys'], "Skip checking SSH keys during app creation", :hide => true
     option ["--enable-jenkins [NAME]"], "Enable Jenkins builds for this application (will create a Jenkins application if not already available). The default name will be 'jenkins' if not specified."
+    option ["-x", "--make-ha"], "Make application highly available (HA)."
     argument :name, "Name for your application", ["-a", "--app NAME"], :optional => true
     argument :cartridges, "The web framework this application should use", ["-t", "--type CARTRIDGE"], :optional => true, :type => :list
     def create(name, cartridges)
@@ -127,6 +128,10 @@ module RHC::Commands
         end
       end
 
+      if options.scaling.blank? and options.make_ha
+        raise RHC::ScalingNotFoundError.new("The -x/--make-ha option can be used only with the -s/--scalable option.")
+      end
+
       paragraph do
         header "Application Options"
         say table([["Domain:", options.namespace],
@@ -180,6 +185,16 @@ module RHC::Commands
           add_jenkins_client_to(rest_app, messages)
           paragraph{ indent{ success messages.map(&:strip) } }
         end if build_app_exists
+      end
+
+      if options.make_ha
+        begin
+          say "Making your app HA"
+          rest_app.make_ha
+          success "Your application #{name}  is HA now"
+        rescue Exception => e
+          warn "#{e}. There was an error while making your application HA. Your application was created successfully but will not be highly available without further action."
+        end
       end
 
       debug "Checking SSH keys through the wizard"
