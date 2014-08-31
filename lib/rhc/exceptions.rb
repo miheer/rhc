@@ -313,4 +313,11 @@ module RHC
       super message, 1
     end
   end
+
+  class ScalingNotFoundError < Exception
+    def initialize(message="Scaling option not found")
+      super message
+    end
+  end
+
 end

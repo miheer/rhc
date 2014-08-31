@@ -348,6 +348,11 @@ module RHC
         return c unless c == 0
         domain_id <=> other.domain_id
       end
+
+      def make_ha
+        rest_method 'MAKE_HA', :event => "make-ha"
+      end
+
     end
   end
 end
