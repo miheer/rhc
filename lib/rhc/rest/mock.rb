@@ -426,7 +426,8 @@ module RHC::Rest::Mock
        ['LIST_DEPLOYMENTS',                "broker/rest/domain/#{domain_id}/application/#{app_id}/deployments",  'get' ],
        ['UPDATE_DEPLOYMENTS',              "broker/rest/domain/#{domain_id}/application/#{app_id}/deployments",  'post' ],
        ['ACTIVATE',                        "broker/rest/domain/#{domain_id}/application/#{app_id}/events",       'post'],
-       ['DEPLOY',                          "broker/rest/domain/#{domain_id}/application/#{app_id}/deployments",  'post']
+       ['DEPLOY',                          "broker/rest/domain/#{domain_id}/application/#{app_id}/deployments",  'post'],
+       ['MAKE_HA',                         "broker/rest/application/#{app_id}/events",                           'make-ha'],
       ].compact
     end
 
@@ -1040,6 +1041,11 @@ module RHC::Rest::Mock
         MockRestDeployment.new(self, '0000004', 'master', '0000004', nil, false, base_time4, false, [base_time4]),
         MockRestDeployment.new(self, '0000005', 'master', '0000005', nil, false, base_time5, false, [base_time5]),
       ]
+    end
+
+    def make_ha
+      raise RHC::MakeHaNotSupportedException.new unless supports_make_ha?
+      @app
     end
   end
 
