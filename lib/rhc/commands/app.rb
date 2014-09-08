@@ -128,7 +128,7 @@ module RHC::Commands
         end
       end
 
-      if options.scaling.blank? and options.make_ha
+      if !options.scaling and options.make_ha
         raise RHC::ScalingNotFoundError.new("The -x/--make-ha option can be used only with the -s/--scalable option.")
       end
 
@@ -191,7 +191,7 @@ module RHC::Commands
         begin
           say "Making your app HA"
           rest_app.make_ha
-          success "Your application #{name}  is HA now"
+          success "Your application #{name} is HA now"
         rescue Exception => e
           warn "#{e}. There was an error while making your application HA. Your application was created successfully but will not be highly available without further action."
         end

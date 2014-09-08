@@ -237,6 +237,20 @@ describe RHC::Commands::App do
       end
     end
 
+    context 'when -x/--make-ha option is provide to make an application HA' do
+      before do
+        domain = rest_client.domains.first
+      end
+      context 'with -s before -x/--make-ha' do
+        let(:arguments) { ['app', 'create', 'app1', 'mock_standalone_cart-1', '-s', '-x' ] }
+        it("should make a scaled app HA") { run_output.should match(/Your application app1 is HA now/m) }
+      end
+      context 'without -s before -x/--make-ha' do
+        let(:arguments) { ['app', 'create', 'app1', 'mock_standalone_cart-1', '-x', '--trace'] }
+        it { expect { run }.to raise_error(RHC::ScalingNotFoundError, "The -x/--make-ha option can be used only with the -s/--scalable option.") }
+      end
+    end
+
   end
 
   describe 'cart matching behavior' do
