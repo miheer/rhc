@@ -193,7 +193,10 @@ module RHC::Commands
           rest_app.make_ha
           success "Your application #{name} is HA now"
         rescue Exception => e
-          warn "#{e}. There was an error while making your application HA. Your application was created successfully but will not be highly available without further action."
+          warn "#{e}"
+          add_issue("There was an error while making your application HA.",
+                    "Issue the make-ha REST API call",
+                    "curl -X POST #{openshift_url}/broker/rest/application/#{rest_app.uuid}/events --user user@example.com:password --data-urlencode event=make-ha")
         end
       end
 

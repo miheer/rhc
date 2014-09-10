@@ -248,11 +248,6 @@ module RHC
         it_should_behave_like "a control method"
       end
 
-      context "#make_ha" do
-        let(:control_data) { { :method => :make_ha, :event => 'make-ha', :link => 'make_ha', :payload => false } }
-        it_should_behave_like "a control method"
-      end
-
       context "#scale_down" do
         let(:control_data) { { :method => :scale_down, :event => 'scale-down', :link => 'scale_down', :payload => false } }
         it_should_behave_like "a control method"

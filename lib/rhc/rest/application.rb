@@ -206,6 +206,10 @@ module RHC
         has_param?('ADD_CARTRIDGE', 'gear_size')
       end
 
+      def supports_make_ha?
+        supports? 'MAKE_HA'
+      end
+
       def deployments
         debug "Listing deployments for application #{name}"
         raise RHC::DeploymentsNotSupportedException if !supports? "LIST_DEPLOYMENTS"
@@ -350,6 +354,7 @@ module RHC
       end
 
       def make_ha
+        raise RHC::MakeHaNotSupportedException.new unless supports_make_ha?
         rest_method 'MAKE_HA', :event => "make-ha"
       end
 

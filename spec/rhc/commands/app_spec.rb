@@ -241,7 +241,13 @@ describe RHC::Commands::App do
       before do
         domain = rest_client.domains.first
       end
+      context 'when make-ha is not supported by the server' do
+        before { RHC::Rest::Mock::MockRestApplication.any_instance.stub(:supports_make_ha?).and_return(false) }
+        let(:arguments) { ['app', 'create', 'app1', 'mock_standalone_cart-1', '-s', '-x' ] }
+        it("should warn about failure to make the application HA") { run_output.should match("Server does not support HA") }
+      end
       context 'with -s before -x/--make-ha' do
+        before { RHC::Rest::Mock::MockRestApplication.any_instance.stub(:supports_make_ha?).and_return(true) }
         let(:arguments) { ['app', 'create', 'app1', 'mock_standalone_cart-1', '-s', '-x' ] }
         it("should make a scaled app HA") { run_output.should match(/Your application app1 is HA now/m) }
       end

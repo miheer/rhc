@@ -1044,6 +1044,7 @@ module RHC::Rest::Mock
     end
 
     def make_ha
+      raise RHC::MakeHaNotSupportedException.new unless supports_make_ha?
       @app
     end
   end

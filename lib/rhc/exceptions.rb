@@ -320,4 +320,10 @@ module RHC
     end
   end
 
+  class MakeHaNotSupportedException < Exception
+    def initialize(message="Server does not support HA")
+      super message
+    end
+  end
+
 end
