@@ -58,6 +58,9 @@ module RHC::Rest::Mock
     def example_allows_gear_sizes?
       respond_to?(:supports_allowed_gear_sizes?) && supports_allowed_gear_sizes?
     end
+    def example_allows_ha?
+      respond_to?(:supports_make_ha?) && supports_make_ha?
+    end
 
     def expect_authorization(with_auth)
       username, password = credentials_for(with_auth)
@@ -427,7 +430,7 @@ module RHC::Rest::Mock
        ['UPDATE_DEPLOYMENTS',              "broker/rest/domain/#{domain_id}/application/#{app_id}/deployments",  'post' ],
        ['ACTIVATE',                        "broker/rest/domain/#{domain_id}/application/#{app_id}/events",       'post'],
        ['DEPLOY',                          "broker/rest/domain/#{domain_id}/application/#{app_id}/deployments",  'post'],
-       ['MAKE_HA',                         "broker/rest/application/#{app_id}/events",                           'make-ha'],
+      (['MAKE_HA',                         "broker/rest/application/#{app_id}/events",                           'make-ha'] if example_allows_ha?),
       ].compact
     end
 
