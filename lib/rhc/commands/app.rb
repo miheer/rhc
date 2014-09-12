@@ -128,6 +128,10 @@ module RHC::Commands
         end
       end
 
+      if options.make_ha and !rest_client.user.capabilities.ha
+        raise RHC::MakeHaNotAllowed.new("You do not have permission to make highly available applications.")
+      end
+
       if options.make_ha and !options.scaling
         raise RHC::ScalingNotFoundError.new("The --make-ha option can be used only with the -s/--scalable option.")
       end
@@ -154,6 +158,17 @@ module RHC::Commands
         success "done"
 
         paragraph{ indent{ success rest_app.messages.map(&:strip) } }
+      end
+
+      if options.make_ha and !rest_app.supports_make_ha?
+        paragraph do
+          warn "Server does not support HA applications."
+
+          say "Deleting created application ..."
+          rest_app.destroy
+
+          return 1
+        end
       end
 
       build_app_exists = rest_app.building_app

@@ -326,4 +326,10 @@ module RHC
     end
   end
 
+  class MakeHaNotAllowed < Exception
+    def initialize(message="User does not have ha capability")
+      super message
+    end
+  end
+
 end
